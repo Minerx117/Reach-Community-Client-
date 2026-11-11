@@ -1,0 +1,45 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# IDEs
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test and coverage outputs
+TestResults/
+coverage/
+coverage.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local configuration
+*.local.json
+.env
+
+# CMake native host build outputs
+engine-host/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Optional local test data (never commit game files)
+/test-data/
+
+# Local compilation output
+/artifacts/
+**/bin/
+**/obj/
+/engine-host/build/

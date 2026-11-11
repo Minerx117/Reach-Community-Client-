@@ -1,0 +1,57 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore ReachCommunityClient.sln
+
+      - name: Build
+        run: dotnet build ReachCommunityClient.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --solution ReachCommunityClient.sln --configuration Release --no-build
+
+
+  build-native-engine-host-scaffold:
+    name: Build native engine-host scaffold
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S engine-host -B engine-host/build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build native host
+        run: cmake --build engine-host/build --config Release --parallel
+
+      - name: Run native host checks
+        run: ctest --test-dir engine-host/build -C Release --output-on-failure

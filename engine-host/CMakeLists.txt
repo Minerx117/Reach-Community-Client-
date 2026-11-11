@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.20)
+project(ReachCommunityClientEngineHost LANGUAGES CXX)
+
+add_executable(rcc-engine-host src/main.cpp)
+target_compile_features(rcc-engine-host PRIVATE cxx_std_20)
+target_compile_definitions(rcc-engine-host PRIVATE RCC_VERSION=\"0.01.03\")
+set_target_properties(rcc-engine-host PROPERTIES CXX_EXTENSIONS OFF)
+
+if(MSVC)
+  target_compile_options(rcc-engine-host PRIVATE /W4 /permissive-)
+else()
+  target_compile_options(rcc-engine-host PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
+endif()
+
+include(CTest)
+if(BUILD_TESTING)
+  add_test(NAME engine_host_self_check COMMAND rcc-engine-host --self-check)
+  set_tests_properties(engine_host_self_check PROPERTIES PASS_REGULAR_EXPRESSION "RCC engine-host scaffold is operational")
+  add_test(NAME engine_host_capabilities COMMAND rcc-engine-host --capabilities)
+  set_tests_properties(engine_host_capabilities PROPERTIES PASS_REGULAR_EXPRESSION "requires_rcc_engine_runtime")
+endif()

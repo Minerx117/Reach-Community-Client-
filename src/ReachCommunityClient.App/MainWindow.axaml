@@ -1,0 +1,101 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ReachCommunityClient.App.MainWindow"
+        Title="Reach Community Client 0.01.03"
+        Width="1120" Height="780" MinWidth="850" MinHeight="650"
+        Background="#0A111B" WindowStartupLocation="CenterScreen">
+  <Grid ColumnDefinitions="230,*">
+    <Border Grid.Column="0" Background="#101B29" Padding="22,26">
+      <StackPanel Spacing="20">
+        <StackPanel Spacing="4">
+          <TextBlock Text="REACH" FontSize="27" FontWeight="Bold" Foreground="#F2F6FA" />
+          <TextBlock Text="COMMUNITY CLIENT" FontSize="10" FontWeight="Bold" LetterSpacing="2" Foreground="#6CC5D1" />
+          <TextBlock Text="v0.01.03 · EARLY ACCESS" FontSize="9" Foreground="#91A3B7" />
+        </StackPanel>
+        <Border Height="1" Background="#2A3B4F" />
+        <StackPanel Spacing="9">
+          <TextBlock Text="YOUR GAME" FontSize="10" FontWeight="Bold" Foreground="#8296AA" />
+          <TextBlock Text="◈  Halo: The Master Chief Collection" Foreground="#E7EEF6" FontSize="12" TextWrapping="Wrap" />
+          <TextBlock Text="◈  Halo: Reach content" Foreground="#B8C7D6" FontSize="12" />
+        </StackPanel>
+        <Border Height="1" Background="#2A3B4F" />
+        <StackPanel Spacing="9">
+          <TextBlock Text="RCC GOALS" FontSize="10" FontWeight="Bold" Foreground="#8296AA" />
+          <TextBlock Text="◇  Original Reach menu" Foreground="#B8C7D6" FontSize="12" />
+          <TextBlock Text="◇  Live server browser" Foreground="#B8C7D6" FontSize="12" />
+          <TextBlock Text="◇  Host / join sessions" Foreground="#B8C7D6" FontSize="12" />
+          <TextBlock Text="◇  Dedicated server" Foreground="#B8C7D6" FontSize="12" />
+          <TextBlock Text="All are RCC-owned development goals, not working features in this build." Foreground="#91A3B7" FontSize="10" TextWrapping="Wrap" />
+        </StackPanel>
+        <Border Height="1" Background="#2A3B4F" />
+        <StackPanel Spacing="5">
+          <TextBlock Text="OPEN SOURCE" Foreground="#6CC5D1" FontSize="10" FontWeight="Bold" />
+          <TextBlock Text="GPL-3.0-or-later" Foreground="#91A3B7" FontSize="11" />
+          <TextBlock Text="Independent community development. No external game-client backend." Foreground="#91A3B7" FontSize="10" TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel VerticalAlignment="Bottom" Spacing="3">
+          <TextBlock Text="COMMUNITY BUILT" Foreground="#6CC5D1" FontSize="10" FontWeight="Bold" />
+          <TextBlock Text="Inspect the source. Review changes. Contribute." Foreground="#91A3B7" FontSize="10" TextWrapping="Wrap" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <Grid Grid.Column="1" RowDefinitions="Auto,*">
+      <Border Grid.Row="0" BorderBrush="#25364A" BorderThickness="0,0,0,1" Padding="28,20">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Spacing="4">
+            <TextBlock Text="REACH COMMAND" FontSize="10" FontWeight="Bold" LetterSpacing="2" Foreground="#6CC5D1" />
+            <TextBlock Text="Your Reach installation, ready to check." FontSize="23" FontWeight="SemiBold" Foreground="#F2F6FA" />
+          </StackPanel>
+          <Border Grid.Column="1" Background="#1C3041" CornerRadius="16" Padding="12,7" VerticalAlignment="Center">
+            <TextBlock Text="BUILD 0.01.03" FontSize="10" FontWeight="Bold" Foreground="#C6D8E8" />
+          </Border>
+        </Grid>
+      </Border>
+      <ScrollViewer Grid.Row="1">
+        <StackPanel Margin="28" Spacing="17">
+          <Border Background="#142234" BorderBrush="#2B4056" BorderThickness="1" CornerRadius="12" Padding="19">
+            <StackPanel Spacing="10">
+              <TextBlock Text="STEAM / MCC INSTALLATION" FontSize="10" FontWeight="Bold" LetterSpacing="1.5" Foreground="#6CC5D1" />
+              <TextBlock x:Name="InstallStatusText" Text="Checking Steam libraries…" FontSize="19" FontWeight="SemiBold" Foreground="#F2F6FA" />
+              <TextBlock x:Name="InstallPathText" Text="" FontSize="11" Foreground="#A8B9CA" TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal" Spacing="9">
+                <Button x:Name="LaunchMccButton" Content="Launch official MCC" Padding="14,9" IsEnabled="False" Click="LaunchMcc_Click" />
+                <Button Content="Refresh checks" Padding="14,9" Click="Refresh_Click" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <Border Background="#101C2A" BorderBrush="#2B4056" BorderThickness="1" CornerRadius="12" Padding="19">
+            <StackPanel Spacing="11">
+              <TextBlock Text="REACH CONTENT DIAGNOSTICS" FontSize="10" FontWeight="Bold" LetterSpacing="1.5" Foreground="#6CC5D1" />
+              <TextBlock x:Name="ReachStatusText" Text="Waiting for installation scan" Foreground="#F2F6FA" FontSize="16" FontWeight="SemiBold" />
+              <TextBlock x:Name="ReachDetailsText" Text="Checks haloreach.dll, maps and mainmenu.map. No files are modified." Foreground="#A8B9CA" FontSize="11" TextWrapping="Wrap" />
+              <TextBlock x:Name="DiagnosticsText" Text="Diagnostics will appear here." Foreground="#C7D5E2" FontSize="11" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+
+          <Border Background="#142234" BorderBrush="#37576A" BorderThickness="1" CornerRadius="12" Padding="19">
+            <StackPanel Spacing="10">
+              <TextBlock Text="RCC ENGINE RUNTIME" FontSize="10" FontWeight="Bold" LetterSpacing="1.5" Foreground="#6CC5D1" />
+              <TextBlock Text="Original Halo: Reach main menu" FontSize="20" FontWeight="SemiBold" Foreground="#F2F6FA" />
+              <TextBlock Text="This is the target for RCC's own native runtime. The runtime loader, rendering pipeline, and original-menu startup have not been implemented yet." Foreground="#A8B9CA" FontSize="11" TextWrapping="Wrap" />
+              <TextBlock x:Name="RuntimeStatusText" Text="RCC engine runtime not implemented." Foreground="#C2D0DE" FontSize="12" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+
+          <Border Background="#101C2A" BorderBrush="#2B4056" BorderThickness="1" CornerRadius="12" Padding="19">
+            <StackPanel Spacing="8">
+              <TextBlock Text="RCC MULTIPLAYER" FontSize="10" FontWeight="Bold" LetterSpacing="1.5" Foreground="#6CC5D1" />
+              <TextBlock Text="Community servers · Host · Join" FontSize="16" FontWeight="SemiBold" Foreground="#F2F6FA" />
+              <TextBlock Text="RCC will implement its own live server directory, lobby/session services, transport, and game-state synchronisation. These are not available in this build; no fake server list is shown." Foreground="#A8B9CA" FontSize="11" TextWrapping="Wrap" />
+              <TextBlock x:Name="MultiplayerStatusText" Text="RCC multiplayer services not implemented." Foreground="#C2D0DE" FontSize="12" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+          <TextBlock x:Name="AppStatusText" Text="Installation check running. No game files are modified." Foreground="#71849A" FontSize="10" TextWrapping="Wrap" />
+          <TextBlock Text="Unofficial fan project. Requires a legitimate user-owned MCC/Reach installation. Game files are never included or modified by the diagnostic scan." Foreground="#71849A" FontSize="10" TextWrapping="Wrap" />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</Window>
