@@ -1,0 +1,106 @@
+name: Build Windows release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-x64:
+    name: Publish Windows x64 executable
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore ReachCommunityClient.sln
+
+      - name: Build and test
+        run: |
+          dotnet build ReachCommunityClient.sln --configuration Release --no-restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test --solution ReachCommunityClient.sln --configuration Release --no-build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Publish self-contained single-file executable
+        shell: pwsh
+        run: |
+          $version = '0.01.03'
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $version = $env:GITHUB_REF_NAME.TrimStart('v') }
+          dotnet publish src/ReachCommunityClient.App/ReachCommunityClient.App.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:DebugType=embedded `
+            "-p:Version=$version" `
+            --output artifacts/publish/win-x64
+          if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed: $LASTEXITCODE" }
+          if (-not (Test-Path 'artifacts/publish/win-x64/ReachCommunityClient.exe')) {
+            throw 'Expected ReachCommunityClient.exe was not produced.'
+          }
+
+      - name: Build RCC native engine-host scaffold
+        shell: pwsh
+        run: |
+          cmake -S engine-host -B artifacts/engine-host-build -A x64
+          if ($LASTEXITCODE -ne 0) { throw "CMake configure failed: $LASTEXITCODE" }
+          cmake --build artifacts/engine-host-build --config Release --parallel
+          if ($LASTEXITCODE -ne 0) { throw "Engine-host build failed: $LASTEXITCODE" }
+          ctest --test-dir artifacts/engine-host-build -C Release --output-on-failure
+          if ($LASTEXITCODE -ne 0) { throw "Engine-host tests failed: $LASTEXITCODE" }
+
+      - name: Package RCC executable and licence
+        shell: pwsh
+        run: |
+          $version = '0.01.03'
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $version = $env:GITHUB_REF_NAME.TrimStart('v') }
+          $stage = 'artifacts/package/Reach-Community-Client'
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Copy-Item 'artifacts/publish/win-x64/ReachCommunityClient.exe' $stage
+          Copy-Item 'LICENSE' $stage
+          Copy-Item 'THIRD-PARTY-NOTICES.md' $stage
+          Copy-Item 'README.md' $stage
+          Copy-Item 'artifacts/engine-host-build/Release/rcc-engine-host.exe' $stage
+          @(
+            "Reach Community Client $version (Windows x64)"
+            ''
+            'Run ReachCommunityClient.exe to open the RCC launcher.'
+            'The app performs read-only Steam MCC and Halo: Reach installation diagnostics.'
+            'Use Launch official MCC to hand off to the official Steam client.'
+            'The RCC native engine host in this package is diagnostic-only in this release.'
+            'The original Reach menu, live server browser, multiplayer, and dedicated server are not implemented yet.'
+            'RCC does not download, build, bundle, or run any external Halo client or backend.'
+            'No Microsoft game files or maps are included. Users must own and install MCC and Reach content.'
+            'Reach Community Client source is licensed under GNU GPL-3.0-or-later. See LICENSE and THIRD-PARTY-NOTICES.md.'
+          ) | Set-Content -Encoding utf8 (Join-Path $stage 'READ-ME.txt')
+          $archive = "artifacts/Reach-Community-Client-$version-win-x64.zip"
+          Compress-Archive -Path "$stage/*" -DestinationPath $archive -Force
+          "RELEASE_ARCHIVE=$archive" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Upload Windows build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Reach-Community-Client-windows-x64
+          path: ${{ env.RELEASE_ARCHIVE }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish GitHub release asset
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Reach Community Client ${{ github.ref_name }}
+          generate_release_notes: true
+          files: ${{ env.RELEASE_ARCHIVE }}
