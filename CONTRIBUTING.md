@@ -15,7 +15,7 @@ Thanks for helping improve Reach Community Client. Contributions of code, tests,
 - Clone the repository.
 - Run `dotnet restore ReachCommunityClient.sln`.
 - Run `dotnet build ReachCommunityClient.sln`.
-- Run `dotnet test ReachCommunityClient.sln`.
+- Run `dotnet test --solution ReachCommunityClient.sln`.
 - Run the desktop app with `dotnet run --project src/ReachCommunityClient.App`.
 
 ## Pull requests
@@ -34,3 +34,8 @@ AI tools may be used to help write code, tests, or documentation. Contributors r
 ## Game files and intellectual property
 
 Do not submit Halo, Halo: Reach, MCC, or other third-party copyrighted game files, extracted assets, keys, account credentials, or proprietary binaries. The project should work with a copy of MCC that the user has independently obtained through Steam. Do not use this repository to bypass DRM, anti-cheat, account restrictions, or platform protections.
+
+
+## Standalone engine contributions
+
+The native engine integration is not implemented yet. Please read `docs/STANDALONE-ENGINE-ROADMAP.md`, `docs/PROJECT-NOBLE-REFERENCE.md`, and `docs/ENGINE-HOST-PROTOCOL.md` before proposing engine work. Do not commit game files, extracted maps, binaries, memory dumps, credentials, or proprietary assets. Do not add anti-cheat/DRM bypasses or undocumented live-service access. Features must include reproducible tests and clearly identify the supported MCC/Reach build.
